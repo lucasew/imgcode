@@ -6,6 +6,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
+	"fmt"
 )
 
 // Crypter holds things that will be used to {de,}crypt things
@@ -60,6 +61,7 @@ func NewCrypterFromPassword(passwd string) Crypter {
 	for i := 0; i < aes.BlockSize; i++ {
 		cipherkey[i] = sum[i]
 	}
+	fmt.Printf("%X\n", cipherkey)
 	return Crypter{cipherkey}
 }
 
