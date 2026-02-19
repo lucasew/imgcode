@@ -14,7 +14,9 @@ type Crypter struct {
 	cipherkey []byte
 }
 
-const contextCrypter = "crypter"
+type contextKey string
+
+const contextCrypter contextKey = "crypter"
 
 func ContextWithCrypter(from context.Context, crypter Crypter) context.Context {
 	return context.WithValue(from, contextCrypter, crypter)

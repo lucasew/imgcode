@@ -14,7 +14,7 @@ func TestIfGoAndReturn(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	println(string(bytes))
+	t.Logf("%X", bytes)
 	err = InplaceDecrypt(c, bytes)
 	if err != nil {
 		t.Error(err)

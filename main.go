@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"context"
 	"flag"
+	"fmt"
 	"image"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"os"
 
 	codec "github.com/lucasew/imgcode/codecs/nrgba"
 	video "github.com/lucasew/imgcode/codecs/video"
 	"github.com/lucasew/imgcode/crypt"
+	"github.com/lucasew/imgcode/utils"
 )
 
 var fileFrom = ""
@@ -39,7 +40,7 @@ func main() {
 	flag.Parse()
 	if flag.NArg() < 3 {
 		help()
-		panic("invalid input")
+		utils.Check(fmt.Errorf("invalid input"))
 	}
 	if passwd != "" {
 		crypter := crypt.NewCrypterFromPassword(passwd)
@@ -58,89 +59,55 @@ func main() {
 		imgdecode()
 	default:
 		help()
-		panic("invalid command")
+		utils.Check(fmt.Errorf("invalid command"))
 	}
 }
 
 func videncode() {
 	r, err := os.Open(fileFrom)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	defer r.Close()
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	err = video.Encode(appContext, r, fileTo)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 }
 
 func viddecode() {
 	w, err := os.Create(fileTo)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	err = video.Decode(appContext, w, fileFrom)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 }
 
 func imgencode() {
 	r, err := os.Open(fileFrom)
-	if err != nil {
-		panic(err)
-	}
-	bytes, err := ioutil.ReadAll(r)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
+	bytes, err := io.ReadAll(r)
+	utils.Check(err)
 	img, err := codec.Encode(appContext, bytes)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	outf, err := os.Create(fileTo)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	defer outf.Close()
 	err = png.Encode(outf, img)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 }
 
 func imgdecode() {
 	f, err := os.Open(fileFrom)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	defer f.Close()
 	img, _, err := image.Decode(f)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	outf, err := os.Create(fileTo)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	defer outf.Close()
 	raw, err := codec.Decode(appContext, img)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	r := bytes.NewBuffer(raw)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	outFile, err := os.Create(fileTo)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 	_, err = io.Copy(outFile, r)
-	if err != nil {
-		panic(err)
-	}
+	utils.Check(err)
 }
