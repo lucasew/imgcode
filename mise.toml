@@ -3,6 +3,9 @@ go = "1.22.6"
 golangci-lint = "1.60.1"
 action-validator = "0.6.0"
 
+[settings]
+experimental = true
+
 [tasks.install]
 description = "Install dependencies"
 run = "go mod download && go install golang.org/x/tools/cmd/goimports@latest"
