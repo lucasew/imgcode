@@ -1,0 +1,40 @@
+[tools]
+go = "1.22.6"
+golangci-lint = "1.60.1"
+action-validator = "0.6.0"
+
+[settings]
+experimental = true
+
+[tasks.install]
+description = "Install dependencies"
+run = "go mod download && go install golang.org/x/tools/cmd/goimports@latest"
+sources = ["go.mod", "go.sum"]
+
+[tasks."lint:golangci-lint"]
+description = "Run golangci-lint"
+run = "golangci-lint run"
+
+[tasks.lint]
+description = "Run all linters"
+depends = ["lint:*"]
+
+[tasks."fmt:goimports"]
+description = "Format code with goimports"
+run = "goimports -w ."
+
+[tasks.fmt]
+description = "Run all formatters"
+depends = ["fmt:*"]
+
+[tasks.test]
+description = "Run tests"
+run = "go test -v ./..."
+
+[tasks.codegen]
+description = "Update generated code"
+run = "go generate ./..."
+
+[tasks.ci]
+description = "Run CI pipeline"
+depends = ["lint", "test"]

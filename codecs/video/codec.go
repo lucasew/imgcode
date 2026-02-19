@@ -8,7 +8,6 @@ import (
 	"image"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -25,7 +24,7 @@ const inspectableArtifacts = false
 
 // Decode decodes a byte stream from a video
 func Decode(ctx context.Context, w io.Writer, fromFile string) error {
-	tmpdir, err := ioutil.TempDir("", "imgdecode")
+	tmpdir, err := os.MkdirTemp("", "imgdecode")
 	if inspectableArtifacts {
 		println(tmpdir)
 	} else {
@@ -76,7 +75,10 @@ func Decode(ctx context.Context, w io.Writer, fromFile string) error {
 			return err
 		}
 		var size int32
-		binary.Read(buf, binary.LittleEndian, &size)
+		err = binary.Read(buf, binary.LittleEndian, &size)
+		if err != nil {
+			return err
+		}
 		stepWrite, err := w.Write(buf.Bytes()[0:size])
 		if err != nil {
 			return err
@@ -91,7 +93,7 @@ func Decode(ctx context.Context, w io.Writer, fromFile string) error {
 
 // Encode encodes a byte stream to a video
 func Encode(ctx context.Context, r io.Reader, outfile string) error {
-	tmpdir, err := ioutil.TempDir("", "imgcode")
+	tmpdir, err := os.MkdirTemp("", "imgcode")
 	if inspectableArtifacts {
 		println(tmpdir)
 	} else {
